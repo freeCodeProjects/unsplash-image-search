@@ -152,9 +152,68 @@ body {
   gap      : 1rem;
 }
 
-.misonary img {
+.misonary figure {
+  position       : relative;
+  flex           : 1;
+  display        : flex;
+  justify-content: space-between;
+}
+
+figure:hover figcaption {
+  opacity: 1;
+}
+
+figure img {
   flex      : 1 0 auto;
   width     : minmax(300px, 1fr);
   height    : 300px;
   object-fit: cover;
+}
+
+figure figcaption {
+  width          : 100%;
+  position       : absolute;
+  bottom         : 0;
+  display        : flex;
+  justify-content: space-between;
+  align-items    : center;
+  background     : rgba(0, 0, 0, 0.5);
+  padding        : 1rem;
+  transition     : opacity 0.5s ease-in;
+  opacity        : 0;
+}
+
+figcaption .user {
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+  color          : white;
+  cursor         : default;
+}
+
+figcaption .user img {
+  width        : 48px;
+  height       : 48px;
+  border-radius: 50%;
+  margin-right : 0.5rem;
+}
+
+figcaption .btn-download {
+  height          : 32px;
+  width           : 32px;
+  background-color: white;
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
+  border-radius   : 0.5rem;
+}
+
+figcaption .btn-download:hover {
+  cursor          : pointer;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+figcaption .btn-download img {
+  height: 24px;
+  width : 24px;
 }

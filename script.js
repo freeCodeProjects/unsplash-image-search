@@ -52,7 +52,20 @@ const renderImages = (imgs) => {
 	for (let id in imgs) {
 		const img = imgs[id]
 
-		imagesHTML += `<img src="${img.regularImageUrl}" alt="${img.description}" data-id="${img.id}" loading="lazy"/>`
+		imagesHTML += `<figure>
+			<img src="${img.regularImageUrl}" alt="${img.description}" data-id="${img.id}" loading="lazy"/>
+			<figcaption>
+				<div class="user">
+					<img
+						src="${img.userProfileImage}"
+					/>
+					<span>${img.user}</span>
+				</div>
+				<div class="btn-download">
+					<img src="./img/download.svg" alt="download icon" />
+				</div>
+			</figcaption>
+		</figure>`
 	}
 
 	//append recently fetched images at the end of misonary element
