@@ -120,11 +120,18 @@ body {
   width           : 100%;
   border-radius   : 0.5rem;
   box-shadow      : 0 0 2px 5px rgba(255, 255, 255, 0.5);
+  padding         : 0 0.5rem;
 }
 
-.searchbar img {
-  width  : 4rem;
-  padding: 0.5rem;
+.searchbar button {
+  width           : 4rem;
+  padding         : 0.75rem;
+  border          : none;
+  background-color: white;
+  cursor          : pointer;
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
 }
 
 .searchInput {
@@ -135,7 +142,6 @@ body {
   font-weight   : 200;
   letter-spacing: 1.2;
   padding       : 0.5rem 1rem 0.5rem 0;
-  border-radius : 0.5rem;
 }
 
 .images {
@@ -192,8 +198,8 @@ figcaption .user {
 }
 
 figcaption .user img {
-  width        : 48px;
-  height       : 48px;
+  width        : 40px;
+  height       : 40px;
   border-radius: 50%;
   margin-right : 0.5rem;
 }
@@ -216,4 +222,8 @@ figcaption .btn-download:hover {
 figcaption .btn-download img {
   height: 24px;
   width : 24px;
+}
+
+.hide {
+  display: none;
 }
