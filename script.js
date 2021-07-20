@@ -27,7 +27,7 @@ const fetchImages = async () => {
 			id: img.id,
 			height: img.height,
 			width: img.width,
-			regularImageUrl: img.urls.small,
+			regularImageUrl: img.urls.regular,
 			fullImageUrl: img.urls.full,
 			user: img.user.name,
 			userProfileImage: img.user.profile_image.large,
