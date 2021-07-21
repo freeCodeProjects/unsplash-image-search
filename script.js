@@ -62,8 +62,13 @@ const renderImages = (imgs) => {
 	for (let id in currImages) {
 		const img = currImages[id]
 
-		imagesHTML += `<figure>
-			<img src="${img.smallImageUrl}" alt="${img.description}" data-id="${img.id}" loading="lazy"/>
+		imagesHTML += `<figure onclick="openModal()" data-id="${img.id}">
+			<img
+				alt="${img.description} 
+				src="${img.smallImageUrl}"
+				srcset="${img.smallImageUrl} 600w, ${img.regularImageUrl}"
+				sizes="100vw"
+			loading="lazy"/>
 			<figcaption>
 				<div class="user">
 					<img
@@ -72,7 +77,7 @@ const renderImages = (imgs) => {
 					<span>${img.user}</span>
 				</div>
 				<div class="btn-download">
-					<img src="./img/download.svg" alt="download icon" />
+					<img src="./img/download.svg" alt="download icon" loading="lazy"/>
 				</div>
 			</figcaption>
 		</figure>`
@@ -142,6 +147,55 @@ const formSubmitEventListener = () => {
 	})
 }
 
+const closeModal = () => {
+	const modalElm = document.querySelector('.modal')
+	modalElm.addEventListener('click', (e) => {
+		/* console.log(e) */
+		if (!e.target.closest('.modal-content')) {
+			modalElm.classList.add('hide')
+			document.body.classList.remove('noscroll')
+		}
+	})
+}
+
+const openModal = (e) => {
+	if (!e) var e = window.event
+
+	const target = e.currentTarget
+	const modalElm = document.querySelector('.modal')
+
+	modalElm.classList.remove('hide')
+	document.body.classList.add('noscroll')
+
+	const modalBodyElm = document.querySelector('.modal__body')
+	const bodyImage = `<img
+		class="modal__image"
+		src="${images[target.dataset.id]['smallImageUrl']}"
+		srcset="${images[target.dataset.id]['smallImageUrl']} 600w,
+			${images[target.dataset.id]['regularImageUrl']} 1280w,
+			${images[target.dataset.id]['fullImageUrl']}"
+		sizes="100vw"
+		alt="${images[target.dataset.id]['description']}"
+		loading="lazy"
+	/>`
+	modalBodyElm.innerHTML = bodyImage
+	//adding imageLoadEventListener
+	imageLoadEventListener()
+}
+
+const imageLoadEventListener = () => {
+	//this listener will help vertically center align image when image height is smaller than modal body
+	const imageElm = document.querySelector('.modal__image')
+	imageElm.addEventListener('load', function () {
+		const modalBodyElm = document.querySelector('.modal__body')
+		if (imageElm.clientHeight < modalBodyElm.clientHeight) {
+			imageElm.style.top = 'unset'
+		} else {
+			imageElm.style.top = '0'
+		}
+	})
+}
+
 ;(async function () {
 	perPage = 12
 	page = 1
@@ -152,5 +206,6 @@ const formSubmitEventListener = () => {
 	searchInputEventListener()
 	formSubmitEventListener()
 	fetchInfiniteImages()
+	closeModal()
 	await fetchBackgroundImage()
 })()
