@@ -4,6 +4,13 @@
   box-sizing: border-box;
 }
 
+:root {
+  --gray-color: #767676;
+  --gray-light: rgba(128, 128, 128, 0.25);
+  --gray-dark : rgba(128, 128, 128, 0.5);
+  --shadow    : 0px 1px 1px 0px rgba(0, 0, 0, 0.04);
+}
+
 html,
 body {
   width: 100%;
@@ -195,7 +202,7 @@ figcaption .user {
   justify-content: center;
   align-items    : center;
   color          : white;
-  cursor         : default;
+  cursor         : zoom-in;
 }
 
 figcaption .user img {
@@ -249,14 +256,108 @@ figcaption .btn-download img {
 }
 
 .modal__header {
-  padding: 0.5rem;
+  width          : 100%;
+  padding        : 0.5rem 1rem;
+  display        : flex;
+  justify-content: space-between;
+  align-items    : center;
+}
+
+.modal__close__btn {
+  border-radius: 0.25em;
+  height       : 2.5rem;
+  width        : 2.5rem;
+  cursor       : pointer;
+  border       : 1px solid var(--gray-light);
+  box-shadow   : var(--shadow);
+}
+
+.modal__close__btn:hover {
+  border: 1px solid var(--gray-dark);
+}
+
+.modal__download {
+  display : flex;
+  position: relative;
+  height  : 2.5rem;
+}
+
+.modal__download__btn {
+  padding                  : 0.5rem;
+  display                  : flex;
+  justify-content          : center;
+  align-items              : center;
+  letter-spacing           : 1.5px;
+  cursor                   : pointer;
+  border-top-left-radius   : 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  color                    : var(--gray-color);
+  border                   : 1px solid var(--gray-light);
+  box-shadow               : var(--shadow);
+}
+
+.modal__download__btn:hover {
+  border: 1px solid var(--gray-dark);
+  color : black;
+}
+
+.download__dropdown__arrow {
+  width                     : 2.5rem;
+  border-top-right-radius   : 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  cursor                    : pointer;
+  border                    : 1px solid var(--gray-light);
+  box-shadow                : var(--shadow);
+}
+
+.download__dropdown__arrow:hover {
+  border: 1px solid var(--gray-dark);
+}
+
+.dropdown__arrow {
+  position        : absolute;
+  right           : 0.5rem;
+  top             : -0.5rem;
+  z-index         : 1;
+  width           : 1rem;
+  height          : 0.5rem;
+  background-color: black;
+  position        : absolute;
+  clip-path       : polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.dropdown {
+  position        : absolute;
+  top             : 3.25rem;
+  right           : 0;
+  background-color: black;
+  color           : white;
+  z-index         : 1;
+  border-radius   : 0.25rem;
+  padding         : 0.5rem 0;
+}
+
+.dropdown__content {
+  display       : flex;
+  flex-direction: column;
+}
+
+.dropdown__content span {
+  white-space: nowrap;
+  text-align : right;
+  padding    : 0.75rem 1rem;
+  cursor     : pointer;
+}
+
+.dropdown__content span:hover {
+  color: var(--gray-color);
 }
 
 .modal__body {
   height                    : 100%;
   width                     : 100%;
   position                  : relative;
-  overflow-y                : scroll;
+  overflow-y                : auto;
   border-bottom-left-radius : 0.5rem;
   border-bottom-right-radius: 0.5rem;
   display                   : flex;
@@ -265,13 +366,12 @@ figcaption .btn-download img {
 
 .modal__image {
   position  : absolute;
+  top       : 0;
   left      : 0;
   width     : 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   height    : auto;
 }
-
-
 
 @media (max-width: 576px) {
   figure img {

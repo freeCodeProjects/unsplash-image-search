@@ -1,4 +1,3 @@
-//@ts-check
 const clientId = 'VK-_5v_JjwISU3_wspDxJHk84YuVUJLWO-ERrtUH_0I'
 let perPage, page, images, fetchMore, searchText, previousSearchText
 
@@ -9,7 +8,14 @@ const fetchBackgroundImage = async () => {
 	const json = await response.json()
 
 	let heroELm = document.querySelector('.hero')
-	heroELm.style.background = `black url(${json.urls.full}) no-repeat center center`
+	let backgroundImageUrl = ''
+
+	//calulate which image to use as background Image based on window size
+	if (window.innerWidth < 400) backgroundImageUrl = json.urls.small
+	else if (window.innerWidth < 1080) backgroundImageUrl = json.urls.regular
+	else backgroundImageUrl = json.urls.full
+
+	heroELm.style.background = `black url(${backgroundImageUrl}) no-repeat center center`
 	heroELm.style.backgroundSize = 'cover'
 }
 
@@ -51,6 +57,7 @@ const renderImages = (imgs) => {
 			smallImageUrl: img.urls.small,
 			regularImageUrl: img.urls.regular,
 			fullImageUrl: img.urls.full,
+			downloadLink: img.links.download_location,
 			user: img.user.name,
 			userProfileImage: img.user.profile_image.large,
 			description: img.alt_description
@@ -76,8 +83,8 @@ const renderImages = (imgs) => {
 					/>
 					<span>${img.user}</span>
 				</div>
-				<div class="btn-download">
-					<img src="./img/download.svg" alt="download icon" loading="lazy"/>
+				<div class="btn-download" onclick="downloadImage()" data-id="${img.id}" data-width="${img.width}" data-height="${img.height}">
+					<img src="./img/download.svg" alt="download icon"/>
 				</div>
 			</figcaption>
 		</figure>`
@@ -147,17 +154,6 @@ const formSubmitEventListener = () => {
 	})
 }
 
-const closeModal = () => {
-	const modalElm = document.querySelector('.modal')
-	modalElm.addEventListener('click', (e) => {
-		/* console.log(e) */
-		if (!e.target.closest('.modal-content')) {
-			modalElm.classList.add('hide')
-			document.body.classList.remove('noscroll')
-		}
-	})
-}
-
 const openModal = (e) => {
 	if (!e) var e = window.event
 
@@ -170,17 +166,23 @@ const openModal = (e) => {
 	const modalBodyElm = document.querySelector('.modal__body')
 	const bodyImage = `<img
 		class="modal__image"
-		src="${images[target.dataset.id]['smallImageUrl']}"
+		src="${images[target.dataset.id]['regularImageUrl']}"
 		srcset="${images[target.dataset.id]['smallImageUrl']} 600w,
-			${images[target.dataset.id]['regularImageUrl']} 1280w,
+			${images[target.dataset.id]['regularImageUrl']} 1400w,
 			${images[target.dataset.id]['fullImageUrl']}"
 		sizes="100vw"
 		alt="${images[target.dataset.id]['description']}"
 		loading="lazy"
 	/>`
 	modalBodyElm.innerHTML = bodyImage
-	//adding imageLoadEventListener
+
 	imageLoadEventListener()
+
+	//generate the modal download HTML
+	generateModalDownloadHTML(target.dataset.id)
+
+	//add click event listener to modal
+	modalClickEventListener()
 }
 
 const imageLoadEventListener = () => {
@@ -196,6 +198,113 @@ const imageLoadEventListener = () => {
 	})
 }
 
+const modalClickEventListener = () => {
+	const modalElm = document.querySelector('.modal')
+	const dropdown = document.querySelector('.dropdown')
+	modalElm.addEventListener('click', (e) => {
+		//if close button or modal body background is clicked close the modal and dropdown
+		if (
+			!e.target.closest('.modal-content') ||
+			e.target.closest('.modal__close__btn')
+		) {
+			modalElm.classList.add('hide')
+			dropdown.classList.add('hide')
+			document.body.classList.remove('noscroll')
+		}
+		//if dropdown arrow is clicked toggle dropdown
+		else if (e.target.closest('.download__dropdown__arrow')) {
+			dropdown.classList.toggle('hide')
+		}
+		//if dropdown background is clicked close dropdown
+		else if (!e.target.closest('.dropdown')) {
+			dropdown.classList.add('hide')
+		}
+	})
+}
+
+const generateModalDownloadHTML = (id) => {
+	const img = images[id]
+	const smallWidth = 640
+	const smallHeight = Math.floor((img.height / img.width) * smallWidth)
+	const mediumWidth = 1920
+	const mediumHeight = Math.floor((img.height / img.width) * mediumWidth)
+	const largeWidth = 2400
+	const largeHeight = Math.floor((img.height / img.width) * largeWidth)
+	const downloadHTML = `<span class="modal__download__btn" data-id="${img.id}" data-width="${img.width}" data-height="${img.height}" onclick="downloadImage()">Download</span>
+	<span class="download__dropdown__arrow">
+		<img src="./img/down-arrow.svg" alt="down-arrow icon" />
+	</span>
+	<div class="dropdown hide">
+		<span class="dropdown__arrow"></span>
+		<div class="dropdown__content">
+			<span 
+				data-id="${img.id}" 
+				data-width="${smallWidth}" 
+				data-height="${smallHeight}" 
+				data-toggle-dropdown="true" 
+				onclick="downloadImage()"
+			>Small (${smallWidth}x${smallHeight})</span>
+			<span 
+				data-id="${img.id}" 
+				data-width="${mediumWidth}" 
+				data-height="${mediumHeight}"
+				data-toggle-dropdown="true"
+				onclick="downloadImage()"
+			>Medium (${mediumWidth}x${mediumHeight})</span>
+			<span 
+				data-id="${img.id}" 
+				data-width="${largeWidth}" 
+				data-height="${largeHeight}"
+				data-toggle-dropdown="true"
+				onclick="downloadImage()"
+			>Large (${largeWidth}x${largeHeight})</span>
+			<hr />
+			<span 
+				data-id="${img.id}" 
+				data-width="${img.width}" 
+				data-height="${img.height}"
+				data-toggle-dropdown="true"
+				onclick="downloadImage()"
+			>Original Size (${img.width}x${img.height})</span>
+		</div>
+	</div>`
+
+	const modalDownloadElm = document.querySelector('.modal__download')
+	modalDownloadElm.innerHTML = downloadHTML
+}
+
+const downloadImage = async (e) => {
+	if (!e) var e = window.event
+	e.stopPropagation()
+	const imageId = e.currentTarget.dataset.id
+	const width = e.currentTarget.dataset.width
+	const height = e.currentTarget.dataset.height
+	const toggleDropdown = e.currentTarget.dataset.toggleDropdown
+
+	if (toggleDropdown) {
+		const dropdown = document.querySelector('.dropdown')
+		dropdown.classList.add('hide')
+	}
+
+	//fetch the image url
+	const response = await fetch(
+		`${images[imageId]['downloadLink']}&client_id=${clientId}`
+	)
+	const res = await response.json()
+
+	//compute the final url
+	//check importance of dl parameter https://docs.imgix.com/apis/rendering/format/dl
+	const imageSrc = `${res.url}&w=${width}&h=${height}&dl=unsplash-image-${imageId}.jpg`
+
+	//download the url
+	const link = document.createElement('a')
+	link.href = imageSrc
+	link.click()
+
+	//remove the link element
+	link.remove()
+}
+
 ;(async function () {
 	perPage = 12
 	page = 1
@@ -206,6 +315,5 @@ const imageLoadEventListener = () => {
 	searchInputEventListener()
 	formSubmitEventListener()
 	fetchInfiniteImages()
-	closeModal()
 	await fetchBackgroundImage()
 })()
