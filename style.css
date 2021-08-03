@@ -241,7 +241,10 @@ figcaption .btn-download img {
   justify-content : center;
   align-items     : center;
   z-index         : 1;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(82, 43, 43, 0.7);
+  visibility      : hidden;
+  opacity         : 0;
+  transition      : visibility 0.3s ease-in, opacity 0.3s ease-in;
 }
 
 .modal-content {
@@ -335,6 +338,9 @@ figcaption .btn-download img {
   z-index         : 1;
   border-radius   : 0.25rem;
   padding         : 0.5rem 0;
+  visibility      : hidden;
+  opacity         : 0;
+  transition      : visibility 0.3s ease-in, opacity 0.3s ease-in;
 }
 
 .dropdown__content {
@@ -383,8 +389,9 @@ figcaption .btn-download img {
   }
 }
 
-.hide {
-  display: none;
+.show {
+  visibility: visible;
+  opacity   : 1;
 }
 
 .noscroll {

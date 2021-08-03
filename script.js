@@ -160,7 +160,7 @@ const openModal = (e) => {
 	const target = e.currentTarget
 	const modalElm = document.querySelector('.modal')
 
-	modalElm.classList.remove('hide')
+	modalElm.classList.add('show')
 	document.body.classList.add('noscroll')
 
 	const modalBodyElm = document.querySelector('.modal__body')
@@ -207,17 +207,17 @@ const modalClickEventListener = () => {
 			!e.target.closest('.modal-content') ||
 			e.target.closest('.modal__close__btn')
 		) {
-			modalElm.classList.add('hide')
-			dropdown.classList.add('hide')
+			modalElm.classList.remove('show')
+			dropdown.classList.remove('show')
 			document.body.classList.remove('noscroll')
 		}
 		//if dropdown arrow is clicked toggle dropdown
 		else if (e.target.closest('.download__dropdown__arrow')) {
-			dropdown.classList.toggle('hide')
+			dropdown.classList.toggle('show')
 		}
 		//if dropdown background is clicked close dropdown
 		else if (!e.target.closest('.dropdown')) {
-			dropdown.classList.add('hide')
+			dropdown.classList.remove('show')
 		}
 	})
 }
@@ -234,7 +234,7 @@ const generateModalDownloadHTML = (id) => {
 	<span class="download__dropdown__arrow">
 		<img src="./img/down-arrow.svg" alt="down-arrow icon" />
 	</span>
-	<div class="dropdown hide">
+	<div class="dropdown">
 		<span class="dropdown__arrow"></span>
 		<div class="dropdown__content">
 			<span 
