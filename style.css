@@ -11,6 +11,11 @@
   --gray-light: rgba(128, 128, 128, 0.25);
   --gray-dark : rgba(128, 128, 128, 0.5);
   --shadow    : 0px 1px 1px 0px rgba(0, 0, 0, 0.04);
+  --column    : 3;
+}
+
+a {
+  text-decoration: none;
 }
 
 html,
@@ -156,22 +161,31 @@ body {
   padding        : clamp(1rem, 2vw, 2rem);
   display        : flex;
   justify-content: center;
+  max-width      : 1440px;
+  margin         : auto;
 }
 
-.misonary {
-  display  : flex;
-  flex-wrap: wrap;
-  gap      : 3rem 2rem;
-  width    : 100%;
-  gap      : 1rem;
+.masonry {
+  display              : grid;
+  grid-template-columns: repeat(var(--column), minmax(0, 1fr));
+  gap                  : 3rem 2rem;
+  width                : 100%;
+  gap                  : 1rem;
 }
 
-.misonary figure {
-  position       : relative;
-  flex           : 1;
-  display        : flex;
-  justify-content: space-between;
-  cursor         : zoom-in;
+.masonry .column {
+  display       : flex;
+  flex-direction: column;
+  gap           : 1rem;
+}
+
+.masonry figure {
+  position             : relative;
+  display              : grid;
+  grid-template-columns: 1fr;
+  grid-template-rows   : 1fr;
+  justify-content      : space-between;
+  cursor               : zoom-in;
 }
 
 figure:hover figcaption {
@@ -179,10 +193,14 @@ figure:hover figcaption {
 }
 
 figure img {
-  flex      : 1 0 auto;
-  width     : minmax(300px, 1fr);
-  height    : 300px;
-  object-fit: cover;
+  width       : 100%;
+  height      : auto;
+  object-fit  : cover;
+  position    : relative;
+  top         : 0;
+  grid-column : 1/-1;
+  grid-row    : 1/-1;
+  justify-self: stretch;
 }
 
 figure figcaption {
@@ -251,7 +269,7 @@ figcaption .btn-download img {
 .modal-content {
   height          : 90vw;
   max-height      : 90%;
-  width           : clamp(576px, 96%, 1440px);
+  width           : clamp(576px, 96%, 1320px);
   display         : flex;
   flex-direction  : column;
   align-items     : center;
@@ -349,15 +367,16 @@ figcaption .btn-download img {
   flex-direction: column;
 }
 
-.dropdown__content span {
+.dropdown__content a {
   white-space: nowrap;
   text-align : right;
   padding    : 0.75rem 1rem;
   cursor     : pointer;
+  color      : var(--gray-color);
 }
 
-.dropdown__content span:hover {
-  color: var(--gray-color);
+.dropdown__content a:hover {
+  color: white;
 }
 
 .modal__body {

@@ -1,5 +1,40 @@
 const clientId = 'VK-_5v_JjwISU3_wspDxJHk84YuVUJLWO-ERrtUH_0I'
-let perPage, page, images, fetchMore, searchText, previousSearchText
+let perPage,
+	page,
+	images,
+	fetchMore,
+	searchText,
+	previousSearchText,
+	colHeight1,
+	colHeight2,
+	colHeight3
+
+const initalizeGridColumns = () => {
+	colHeight1 = 1
+	colHeight2 = 2
+	colHeight3 = 3
+	const viewportWidth = window.innerWidth
+	const masnoryElm = document.querySelector('.masonry')
+	if (viewportWidth > 960) {
+		document.documentElement.style.setProperty('--column', 3)
+		masnoryElm.innerHTML = `
+		<div class="column column-1"></div>
+		<div class="column column-2"></div>
+		<div class="column column-3"></div>
+		`
+	} else if (viewportWidth > 560) {
+		document.documentElement.style.setProperty('--column', 2)
+		masnoryElm.innerHTML = `
+		<div class="column column-1"></div>
+		<div class="column column-2"></div>
+		`
+	} else {
+		document.documentElement.style.setProperty('--column', 1)
+		masnoryElm.innerHTML = `
+		<div class="column column-1"></div>
+		`
+	}
+}
 
 const fetchBackgroundImage = async () => {
 	const response = await fetch(
@@ -15,83 +50,53 @@ const fetchBackgroundImage = async () => {
 	else if (window.innerWidth < 1080) backgroundImageUrl = json.urls.regular
 	else backgroundImageUrl = json.urls.full
 
-	heroELm.style.background = `black url(${backgroundImageUrl}) no-repeat center center`
+	heroELm.style.background = `linear-gradient(to right, #ff6f0088, #ff480080), black url(${backgroundImageUrl}) no-repeat center center`
 	heroELm.style.backgroundSize = 'cover'
 }
 
-const fetchQueryImages = async () => {
-	const response = await fetch(
-		`https://api.unsplash.com/search/photos/?client_id=${clientId}&query=${searchText}&per_page=${perPage}&page=${page}`
-	)
+const fetchImages = async () => {
+	fetchMore = false
+	const myUrl = new URL('https://api.unsplash.com')
+	myUrl.searchParams.append('client_id', clientId)
+	myUrl.searchParams.append('per_page', perPage)
+	myUrl.searchParams.append('page', page)
+
+	if (searchText) {
+		myUrl.searchParams.append('query', searchText)
+		myUrl.pathname = '/search/photos'
+	} else {
+		myUrl.pathname = '/photos'
+	}
+
+	const response = await fetch(myUrl.href)
 	const res = await response.json()
+	const result = Array.isArray(res) ? res : res.results
 
-	//render fetched images
-	renderImages(res.results)
-}
-
-const fetchInitialImages = async () => {
-	console.log('feching images')
-
-	const response = await fetch(
-		`https://api.unsplash.com/photos/?client_id=${clientId}&per_page=${perPage}&page=${page}`
-	)
-	const res = await response.json()
-
-	//render fetched images
-	renderImages(res)
-}
-
-const renderImages = (imgs) => {
 	//hide loader when response is empty
-	if (imgs.length === 0) {
+	if (result.length === 0) {
 		document.querySelector('.loader').classList.add('hide')
 	}
 
 	const currImages = {}
 
-	imgs.forEach((img) => {
+	result.forEach((img) => {
 		currImages[img.id] = {
 			id: img.id,
 			height: img.height,
 			width: img.width,
+			blurHash: blurhash.createPngDataUri(img.blur_hash),
 			smallImageUrl: img.urls.small,
 			regularImageUrl: img.urls.regular,
 			fullImageUrl: img.urls.full,
-			downloadLink: img.links.download_location,
+			downloadLink: img.links.download,
 			user: img.user.name,
 			userProfileImage: img.user.profile_image.large,
 			description: img.alt_description
 		}
 	})
 
-	const misonaryElm = document.querySelector('.misonary')
-	let imagesHTML = ''
-	for (let id in currImages) {
-		const img = currImages[id]
-
-		imagesHTML += `<figure onclick="openModal()" data-id="${img.id}">
-			<img
-				alt="${img.description} 
-				src="${img.smallImageUrl}"
-				srcset="${img.smallImageUrl} 600w, ${img.regularImageUrl}"
-				sizes="100vw"
-			loading="lazy"/>
-			<figcaption>
-				<div class="user">
-					<img
-						src="${img.userProfileImage}"
-					/>
-					<span>${img.user}</span>
-				</div>
-				<div class="btn-download" onclick="downloadImage()" data-id="${img.id}" data-width="${img.width}" data-height="${img.height}">
-					<img src="./img/download.svg" alt="download icon"/>
-				</div>
-			</figcaption>
-		</figure>`
-	}
-
-	//append recently fetched images at the end of misonary element
-	misonaryElm.insertAdjacentHTML('beforeend', imagesHTML)
+	//render fetched images
+	renderImages(currImages)
 
 	//update page number
 	page += 1
@@ -103,6 +108,108 @@ const renderImages = (imgs) => {
 	fetchMore = true
 }
 
+const renderImages = (currImages) => {
+	const column1Elm = document.querySelector('.column-1')
+	const column2Elm = document.querySelector('.column-2')
+	const column3Elm = document.querySelector('.column-3')
+	let col1NewHTML = ''
+	let col2NewHTML = ''
+	let col3NewHTML = ''
+
+	for (let id in currImages) {
+		const img = currImages[id]
+		const aspectRatio = img.height / img.width
+		// 300 is assumed width of column. It can be anything.
+		const approxNewHeight = Math.round(aspectRatio * 300)
+		const column = minHeigthColumn()
+		if (column === 1) {
+			colHeight1 += approxNewHeight
+			col1NewHTML += getImageHTML(img)
+		} else if (column === 2) {
+			colHeight2 += approxNewHeight
+			col2NewHTML += getImageHTML(img)
+		} else {
+			colHeight3 += approxNewHeight
+			col3NewHTML += getImageHTML(img)
+		}
+	}
+
+	//append recently fetched images at the end of masonry element
+	column1Elm.insertAdjacentHTML('beforeend', col1NewHTML)
+	if (column2Elm) {
+		column2Elm.insertAdjacentHTML('beforeend', col2NewHTML)
+	}
+	if (column3Elm) {
+		column3Elm.insertAdjacentHTML('beforeend', col3NewHTML)
+	}
+}
+
+const minHeigthColumn = () => {
+	const viewportWidth = window.innerWidth
+	minCol = 1
+	minHeight = colHeight1
+
+	if (viewportWidth > 960) {
+		if (colHeight2 < minHeight) {
+			minCol = 2
+			minHeight = colHeight2
+		}
+		if (colHeight3 < minHeight) {
+			minCol = 3
+			minHeight = colHeight3
+		}
+	} else if (viewportWidth > 560) {
+		if (colHeight2 < minHeight) {
+			minCol = 2
+		}
+	}
+	return minCol
+}
+
+const getImageHTML = (img) => {
+	return `<figure onclick="openModal()" data-id="${img.id}">
+		<img
+			data-placeholder-img="${img.id}"
+			alt="${img.description}"
+			src="${img.blurHash}"
+			style="aspect-ratio: ${img.width}/${img.height}"
+		/>
+		<img
+			data-img="${img.id}"
+			alt="${img.description}"
+			src="${img.smallImageUrl}"
+			srcset="${img.smallImageUrl} 600w, ${img.regularImageUrl}" sizes="100vw"
+			onload="imageLoaded('${img.id}')" loading="lazy"
+			style="aspect-ratio: ${img.width}/${img.height}; opacity: 0;"
+		/>
+		<figcaption>
+			<div class="user">
+				<img src="${img.userProfileImage}" />
+				<span>${img.user}</span>
+			</div>
+			<a
+				href="${img.downloadLink}&w=${img.width}&h=${img.height}&force=true"
+				class="btn-download"
+				data-id="${img.id}"
+				data-width="${img.width}"
+				data-height="${img.height}"
+			>
+				<img src="./img/download.svg" alt="download icon" />
+			</a
+				href=${img.downloadLink}>
+		</figcaption>
+	</figure>`
+}
+
+const imageLoaded = (id) => {
+	//using querySelectorAll because images can be repeated
+	const mainImages = document.querySelectorAll(`[data-img="${id}"]`)
+	mainImages.forEach((image) => {
+		image.style.opacity = '1'
+		image.style.transition = 'opacity 0.5s ease'
+	})
+}
+
 const fetchInfiniteImages = () => {
 	let options = {
 		root: null,
@@ -112,9 +219,8 @@ const fetchInfiniteImages = () => {
 
 	let observer = new IntersectionObserver((entries) => {
 		if (entries[0].isIntersecting) {
-			console.log('intersecting')
-			fetchMore && (searchText ? fetchQueryImages() : fetchInitialImages())
-			fetchMore = false
+			console.log('intersecting', fetchMore)
+			fetchMore && fetchImages()
 		} else {
 			console.log('not Intersecting')
 		}
@@ -125,31 +231,18 @@ const fetchInfiniteImages = () => {
 }
 
 const search = () => {
-	if (previousSearchText === searchText) return
-	else previousSearchText = searchText
-
-	//after resetting innerHTML of misonary Element loader will come in view and it will auto trigger fetching of images.
-	const misonaryElm = document.querySelector('.misonary')
-	misonaryElm.innerHTML = ''
-
+	initalizeGridColumns()
 	//reset other variable
 	images = {}
 	page = 1
 	document.querySelector('.loader').classList.remove('hide')
 }
 
-const searchInputEventListener = () => {
-	const inputElm = document.querySelector('.searchInput')
-	inputElm.addEventListener('keydown', (e) => {
-		const newValue = e.target.value.trim()
-		searchText = e.target.value
-	})
-}
-
 const formSubmitEventListener = () => {
 	const form = document.querySelector('form')
 	form.addEventListener('submit', (e) => {
 		e.preventDefault()
+		searchText = e.target.query.value.trim()
 		search()
 	})
 }
@@ -224,96 +317,70 @@ const modalClickEventListener = () => {
 
 const generateModalDownloadHTML = (id) => {
 	const img = images[id]
+
 	const smallWidth = 640
 	const smallHeight = Math.floor((img.height / img.width) * smallWidth)
 	const mediumWidth = 1920
 	const mediumHeight = Math.floor((img.height / img.width) * mediumWidth)
 	const largeWidth = 2400
 	const largeHeight = Math.floor((img.height / img.width) * largeWidth)
-	const downloadHTML = `<span class="modal__download__btn" data-id="${img.id}" data-width="${img.width}" data-height="${img.height}" onclick="downloadImage()">Download</span>
-	<span class="download__dropdown__arrow">
-		<img src="./img/down-arrow.svg" alt="down-arrow icon" />
-	</span>
-	<div class="dropdown">
-		<span class="dropdown__arrow"></span>
-		<div class="dropdown__content">
-			<span 
-				data-id="${img.id}" 
-				data-width="${smallWidth}" 
-				data-height="${smallHeight}" 
-				data-toggle-dropdown="true" 
-				onclick="downloadImage()"
-			>Small (${smallWidth}x${smallHeight})</span>
-			<span 
-				data-id="${img.id}" 
-				data-width="${mediumWidth}" 
-				data-height="${mediumHeight}"
-				data-toggle-dropdown="true"
-				onclick="downloadImage()"
-			>Medium (${mediumWidth}x${mediumHeight})</span>
-			<span 
-				data-id="${img.id}" 
-				data-width="${largeWidth}" 
-				data-height="${largeHeight}"
-				data-toggle-dropdown="true"
-				onclick="downloadImage()"
-			>Large (${largeWidth}x${largeHeight})</span>
-			<hr />
-			<span 
-				data-id="${img.id}" 
-				data-width="${img.width}" 
-				data-height="${img.height}"
-				data-toggle-dropdown="true"
-				onclick="downloadImage()"
-			>Original Size (${img.width}x${img.height})</span>
-		</div>
-	</div>`
+
+	const downloadHTML = `<a
+			href="${img.downloadLink}&w=${img.width}&h=${img.height}&force=true"
+			class="modal__download__btn"
+			data-id="${img.id}"
+			>Download</a
+		>
+		<span class="download__dropdown__arrow">
+			<img src="./img/down-arrow.svg" alt="down-arrow icon" />
+		</span>
+		<div class="dropdown">
+			<span class="dropdown__arrow"></span>
+			<div class="dropdown__content">
+				<a
+					href="${img.downloadLink}&w=${smallWidth}&h=${smallHeight}&force=true"
+					>Small (${smallWidth}x${smallHeight})</a
+				>
+				<a
+					href="${img.downloadLink}&w=${mediumWidth}&h=${mediumHeight}&force=true"
+					>Medium (${mediumWidth}x${mediumHeight})</a
+				>
+				<a
+					href="${img.downloadLink}&w=${largeWidth}&h=${largeHeight}&force=true"
+					>Large (${largeWidth}x${largeHeight})</a
+				>
+				<hr />
+				<a
+					href="${img.downloadLink}&w=${img.width}&h=${img.height}&force=true"
+					>Original Size (${img.width}x${img.height})</a
+				>
+			</div>
+		</div>`
 
 	const modalDownloadElm = document.querySelector('.modal__download')
 	modalDownloadElm.innerHTML = downloadHTML
 }
 
-const downloadImage = async (e) => {
-	if (!e) var e = window.event
-	e.stopPropagation()
-	const imageId = e.currentTarget.dataset.id
-	const width = e.currentTarget.dataset.width
-	const height = e.currentTarget.dataset.height
-	const toggleDropdown = e.currentTarget.dataset.toggleDropdown
-
-	if (toggleDropdown) {
-		const dropdown = document.querySelector('.dropdown')
-		dropdown.classList.add('hide')
-	}
-
-	//fetch the image url
-	const response = await fetch(
-		`${images[imageId]['downloadLink']}&client_id=${clientId}`
-	)
-	const res = await response.json()
-
-	//compute the final url
-	//check importance of dl parameter https://docs.imgix.com/apis/rendering/format/dl
-	const imageSrc = `${res.url}&w=${width}&h=${height}&dl=unsplash-image-${imageId}.jpg`
-
-	//download the url
-	const link = document.createElement('a')
-	link.href = imageSrc
-	link.click()
-
-	//remove the link element
-	link.remove()
+const widowResizeEventListener = () => {
+	let windowResizeTimeout = undefined
+	window.addEventListener('resize', (e) => {
+		clearTimeout(windowResizeTimeout)
+		windowResizeTimeout = setTimeout(() => {
+			initalizeGridColumns()
+			renderImages(images)
+		}, 500)
+	})
 }
 
 ;(async function () {
-	perPage = 12
+	perPage = 20
 	page = 1
 	images = {}
 	fetchMore = true
 	searchText = ''
-	previousSearchText = ''
-	searchInputEventListener()
 	formSubmitEventListener()
+	initalizeGridColumns()
 	fetchInfiniteImages()
 	await fetchBackgroundImage()
+	widowResizeEventListener()
 })()
