@@ -22,6 +22,7 @@
 					</button>
 					<input
 						name="query"
+						placeholder="Search Images"
 						class="searchInput"
 						type="search"
 						autocomplete="off"
@@ -43,13 +44,19 @@
 		<div class="modal">
 			<div class="modal-content">
 				<div class="modal__header">
-					<div class="modal__close__btn">
+					<button class="modal__close__btn">
 						<img src="./img/close.svg" alt="close icon" />
-					</div>
+					</button>
 					<div class="modal__download"></div>
 				</div>
 				<div class="modal__body"></div>
 			</div>
+		</div>
+		<div class="fab-button">
+			<div class="tooltip">Go to Top</div>
+			<button>
+				<img src="./img/up-arrow.svg" />
+			</button>
 		</div>
 		<script defer src="./blurhash.js"></script>
 		<script defer src="./script.js"></script>

@@ -267,7 +267,7 @@ figcaption .btn-download img {
 }
 
 .modal-content {
-  height          : 90vw;
+  height          : 90vh;
   max-height      : 90%;
   width           : clamp(576px, 96%, 1320px);
   display         : flex;
@@ -286,12 +286,13 @@ figcaption .btn-download img {
 }
 
 .modal__close__btn {
-  border-radius: 0.25em;
-  height       : 2.5rem;
-  width        : 2.5rem;
-  cursor       : pointer;
-  border       : 1px solid var(--gray-light);
-  box-shadow   : var(--shadow);
+  border-radius   : 0.25em;
+  height          : 2.5rem;
+  width           : 2.5rem;
+  cursor          : pointer;
+  border          : 1px solid var(--gray-light);
+  box-shadow      : var(--shadow);
+  background-color: white;
 }
 
 .modal__close__btn:hover {
@@ -397,6 +398,46 @@ figcaption .btn-download img {
   width     : 100%;
   overflow-y: auto;
   height    : auto;
+}
+
+.fab-button {
+  position: fixed;
+  bottom  : 1.5rem;
+  right   : 1.5rem;
+  display : none;
+}
+
+.fab-button:hover .tooltip {
+  visibility: visible;
+  opacity   : 1;
+}
+
+.fab-button button {
+  width        : 3rem;
+  height       : 3rem;
+  border-radius: 50%;
+  border       : 1px solid var(--gray-light);
+  box-shadow   : var(--shadow);
+  cursor       : pointer;
+}
+
+.fab-button button:hover {
+  border: 1px solid var(--gray-dark);
+}
+
+.fab-button .tooltip {
+  visibility      : hidden;
+  opacity         : 0;
+  position        : absolute;
+  top             : -2.5rem;
+  left            : -0.75rem;
+  font-size       : 0.75rem;
+  white-space     : nowrap;
+  background-color: white;
+  padding         : 0.5rem;
+  border          : 1px solid var(--gray-light);
+  border-radius   : 0.25rem;
+  transition      : opacity ease 0.3s;
 }
 
 @media (max-width: 576px) {

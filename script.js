@@ -372,6 +372,36 @@ const widowResizeEventListener = () => {
 	})
 }
 
+const floatedActionButton = () => {
+	const fabElm = document.querySelector('.fab-button')
+	const fabButtonElm = document.querySelector('.fab-button button')
+
+	fabButtonElm.addEventListener('click', () => {
+		window.scroll({
+			top: 0,
+			left: 0,
+			behavior: 'smooth'
+		})
+	})
+
+	let options = {
+		root: null,
+		rootMargin: '0px',
+		threshold: 0.1
+	}
+
+	let observer = new IntersectionObserver((entries) => {
+		if (entries[0].isIntersecting) {
+			fabElm.style.display = 'none'
+		} else {
+			fabElm.style.display = 'block'
+		}
+	}, options)
+
+	let target = document.querySelector('.hero')
+	observer.observe(target)
+}
+
 ;(async function () {
 	perPage = 20
 	page = 1
@@ -383,4 +413,5 @@ const widowResizeEventListener = () => {
 	fetchInfiniteImages()
 	await fetchBackgroundImage()
 	widowResizeEventListener()
+	floatedActionButton()
 })()
