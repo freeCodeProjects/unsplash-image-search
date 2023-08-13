@@ -268,7 +268,6 @@ figcaption .btn-download img {
 
 .modal-content {
   height          : 90vh;
-  max-height      : 90%;
   width           : clamp(576px, 96%, 1320px);
   display         : flex;
   flex-direction  : column;

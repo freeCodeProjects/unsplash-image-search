@@ -263,11 +263,20 @@ const openModal = (e) => {
 		srcset="${images[target.dataset.id]['smallImageUrl']} 600w,
 			${images[target.dataset.id]['regularImageUrl']} 1400w,
 			${images[target.dataset.id]['fullImageUrl']}"
-		sizes="100vw"
+		sizes="50vw"
 		alt="${images[target.dataset.id]['description']}"
 		loading="lazy"
 	/>`
+
+	//scroll to top everytime modal is visible
+	modalBodyElm.scrollTo(0, 0)
+
 	modalBodyElm.innerHTML = bodyImage
+
+	//update the sizes attribute so that high quality image can be loaded in background
+	setTimeout(() => {
+		document.querySelector('.modal__image').setAttribute('sizes', '100vw')
+	}, 100)
 
 	imageLoadEventListener()
 
