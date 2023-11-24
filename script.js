@@ -287,8 +287,8 @@ const openModal = (e) => {
 	const bodyImage = `<img
 		class="modal__image"
 		src="${images[target.dataset.id]['regularImageUrl']}"
-		srcset="${images[target.dataset.id]['smallImageUrl']} 600w,
-			${images[target.dataset.id]['regularImageUrl']} 1400w,
+		srcset="${images[target.dataset.id]['smallImageUrl']} 300w,
+			${images[target.dataset.id]['regularImageUrl']} 600w,
 			${images[target.dataset.id]['fullImageUrl']}"
 		sizes="50vw"
 		alt="${images[target.dataset.id]['description']}"
