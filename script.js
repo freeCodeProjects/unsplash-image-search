@@ -1,4 +1,4 @@
-const clientId = 'VK-_5v_JjwISU3_wspDxJHk84YuVUJLWO-ERrtUH_0I'
+let clientId = 'VK-_5v_JjwISU3_wspDxJHk84YuVUJLWO-ERrtUH_0I'
 let perPage,
 	page,
 	images,
@@ -40,7 +40,13 @@ const fetchBackgroundImage = async () => {
 	const response = await fetch(
 		`https://api.unsplash.com/photos/random/?client_id=${clientId}&orientation=landscape&query=nature`
 	)
-	const json = await response.json()
+	let json
+	try {
+		json = await response.json()
+	} catch (error) {
+		console.log('Error in fetchBackgroundImage response.json')
+		return null
+	}
 
 	let heroELm = document.querySelector('.hero')
 	let backgroundImageUrl = ''
@@ -55,6 +61,9 @@ const fetchBackgroundImage = async () => {
 }
 
 const fetchImages = async () => {
+	if (!fetchMore) {
+		return null
+	}
 	fetchMore = false
 	const myUrl = new URL('https://api.unsplash.com')
 	myUrl.searchParams.append('client_id', clientId)
@@ -69,12 +78,27 @@ const fetchImages = async () => {
 	}
 
 	const response = await fetch(myUrl.href)
-	const res = await response.json()
+
+	let res
+	try {
+		res = await response.json()
+	} catch (error) {
+		console.log('Error in fetchImages response.json')
+		alert('Rate Limit Exceeded')
+		fetchMore = true
+		return null
+	}
+
 	const result = Array.isArray(res) ? res : res.results
 
 	//hide loader when response is empty
 	if (result.length === 0) {
-		document.querySelector('.loader').classList.add('hide')
+		hideLoaderSection()
+
+		//show Empty State if no result found
+		if (Object.keys(images).length === 0) {
+			showNoResultSection()
+		}
 	}
 
 	const currImages = {}
@@ -220,7 +244,7 @@ const fetchInfiniteImages = () => {
 	let observer = new IntersectionObserver((entries) => {
 		if (entries[0].isIntersecting) {
 			console.log('intersecting', fetchMore)
-			fetchMore && fetchImages()
+			fetchImages()
 		} else {
 			console.log('not Intersecting')
 		}
@@ -235,12 +259,15 @@ const search = () => {
 	//reset other variable
 	images = {}
 	page = 1
-	document.querySelector('.loader').classList.remove('hide')
+	showLoaderSection()
+	hideNoResultSection()
+	fetchImages()
 }
 
 const formSubmitEventListener = () => {
 	const form = document.querySelector('form')
 	form.addEventListener('submit', (e) => {
+		console.log('form submitted')
 		e.preventDefault()
 		searchText = e.target.query.value.trim()
 		search()
@@ -409,6 +436,22 @@ const floatedActionButton = () => {
 
 	let target = document.querySelector('.hero')
 	observer.observe(target)
+}
+
+const showLoaderSection = () => {
+	document.querySelector('.loader').classList.remove('hide')
+}
+
+const hideLoaderSection = () => {
+	document.querySelector('.loader').classList.add('hide')
+}
+
+const showNoResultSection = () => {
+	document.querySelector('.empty-state').classList.remove('hide')
+}
+
+const hideNoResultSection = () => {
+	document.querySelector('.empty-state').classList.add('hide')
 }
 
 ;(async function () {

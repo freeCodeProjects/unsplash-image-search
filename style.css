@@ -439,6 +439,20 @@ figcaption .btn-download img {
   transition      : opacity ease 0.3s;
 }
 
+.empty-state {
+  display       : flex;
+  flex-direction: column;
+  align-items   : center;
+}
+
+.empty-state img {
+  max-width: 40rem;
+}
+
+.hide {
+  display: none;
+}
+
 @media (max-width: 576px) {
   figure img {
     width: calc(100vw - 2rem);
