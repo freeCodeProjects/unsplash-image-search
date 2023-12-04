@@ -288,8 +288,7 @@ const openModal = (e) => {
 		class="modal__image"
 		src="${images[target.dataset.id]['regularImageUrl']}"
 		srcset="${images[target.dataset.id]['smallImageUrl']} 300w,
-			${images[target.dataset.id]['regularImageUrl']} 600w,
-			${images[target.dataset.id]['fullImageUrl']}"
+			${images[target.dataset.id]['regularImageUrl']}"
 		sizes="50vw"
 		alt="${images[target.dataset.id]['description']}"
 		loading="lazy"
@@ -303,7 +302,13 @@ const openModal = (e) => {
 	//update the sizes attribute so that high quality image can be loaded in background
 	setTimeout(() => {
 		document.querySelector('.modal__image').setAttribute('sizes', '100vw')
-	}, 100)
+		document.querySelector('.modal__image').setAttribute(
+			'srcset',
+			`${images[target.dataset.id]['smallImageUrl']} 300w,
+		${images[target.dataset.id]['regularImageUrl']} 600w,
+		${images[target.dataset.id]['fullImageUrl']}`
+		)
+	}, 500)
 
 	imageLoadEventListener()
 
