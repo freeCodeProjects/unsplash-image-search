@@ -179,7 +179,7 @@ body {
   gap           : 1rem;
 }
 
-.masonry figure {
+.masonry .figure {
   position             : relative;
   display              : grid;
   grid-template-columns: 1fr;
@@ -188,11 +188,11 @@ body {
   cursor               : zoom-in;
 }
 
-figure:hover figcaption {
+.figure:hover .figcaption {
   opacity: 1;
 }
 
-figure img {
+.figure img {
   width       : 100%;
   height      : auto;
   object-fit  : cover;
@@ -203,7 +203,7 @@ figure img {
   justify-self: stretch;
 }
 
-figure figcaption {
+.figure .figcaption {
   width          : 100%;
   position       : absolute;
   bottom         : 0;
@@ -216,7 +216,7 @@ figure figcaption {
   opacity        : 0;
 }
 
-figcaption .user {
+.figcaption .user {
   display        : flex;
   justify-content: center;
   align-items    : center;
@@ -224,14 +224,14 @@ figcaption .user {
   cursor         : zoom-in;
 }
 
-figcaption .user img {
+.figcaption .user img {
   width        : 40px;
   height       : 40px;
   border-radius: 50%;
   margin-right : 0.5rem;
 }
 
-figcaption .btn-download {
+.figcaption .btn-download {
   height          : 32px;
   width           : 32px;
   background-color: white;
@@ -241,12 +241,12 @@ figcaption .btn-download {
   border-radius   : 0.5rem;
 }
 
-figcaption .btn-download:hover {
+.figcaption .btn-download:hover {
   cursor          : pointer;
   background-color: rgba(255, 255, 255, 0.9);
 }
 
-figcaption .btn-download img {
+.figcaption .btn-download img {
   height: 24px;
   width : 24px;
 }

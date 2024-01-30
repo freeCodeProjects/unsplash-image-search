@@ -191,7 +191,7 @@ const minHeigthColumn = () => {
 }
 
 const getImageHTML = (img) => {
-	return `<figure onclick="openModal()" data-id="${img.id}">
+	return `<div class="figure" onclick="openModal()" data-id="${img.id}">
 		<img
 			data-placeholder-img="${img.id}"
 			alt="${img.description}"
@@ -206,7 +206,7 @@ const getImageHTML = (img) => {
 			onload="imageLoaded('${img.id}')" loading="lazy"
 			style="aspect-ratio: ${img.width}/${img.height}; opacity: 0;"
 		/>
-		<figcaption>
+		<div class="figcaption">
 			<div class="user">
 				<img src="${img.userProfileImage}" />
 				<span>${img.user}</span>
@@ -221,8 +221,8 @@ const getImageHTML = (img) => {
 				<img src="./img/download.svg" alt="download icon" />
 			</a
 				href=${img.downloadLink}>
-		</figcaption>
-	</figure>`
+		</div>
+	</div>`
 }
 
 const imageLoaded = (id) => {
