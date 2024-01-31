@@ -217,6 +217,7 @@ const getImageHTML = (img) => {
 				data-id="${img.id}"
 				data-width="${img.width}"
 				data-height="${img.height}"
+				onclick="event.stopPropagation()"
 			>
 				<img src="./img/download.svg" alt="download icon" />
 			</a
