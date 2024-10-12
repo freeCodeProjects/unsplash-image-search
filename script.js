@@ -15,25 +15,29 @@ const initalizeGridColumns = () => {
 	colHeight3 = 3
 	const viewportWidth = window.innerWidth
 	const masnoryElm = document.querySelector('.masonry')
+	const cols = new DocumentFragment()
 	if (viewportWidth > 960) {
 		document.documentElement.style.setProperty('--column', 3)
-		masnoryElm.innerHTML = `
-		<div class="column column-1"></div>
-		<div class="column column-2"></div>
-		<div class="column column-3"></div>
-		`
+		for(let i=1; i <= 3; i++){
+			const div = document.createElement('div')
+			div.className = `column column-${i}`
+			cols.appendChild(div)
+		}
 	} else if (viewportWidth > 560) {
 		document.documentElement.style.setProperty('--column', 2)
-		masnoryElm.innerHTML = `
-		<div class="column column-1"></div>
-		<div class="column column-2"></div>
-		`
+		for(let i=1; i <= 2; i++){
+			const div = document.createElement('div')
+			div.className = `column column-${i}`
+			cols.appendChild(div)
+		}
 	} else {
 		document.documentElement.style.setProperty('--column', 1)
-		masnoryElm.innerHTML = `
-		<div class="column column-1"></div>
-		`
+		const div = document.createElement('div')
+		div.className = `column column-${i}`
+		cols.appendChild(div)
 	}
+	masnoryElm.innerHTML = ''
+	masnoryElm.appendChild(cols)
 }
 
 const fetchBackgroundImage = async () => {
@@ -212,7 +216,7 @@ const getImageHTML = (img) => {
 				<span>${img.user}</span>
 			</div>
 			<a
-				href="${img.downloadLink}&w=${img.width}&h=${img.height}&force=true"
+				href="${img.downloadLink}&force=true"
 				class="btn-download"
 				data-id="${img.id}"
 				data-width="${img.width}"
@@ -290,7 +294,6 @@ const openModal = (e) => {
 		src="${images[target.dataset.id]['regularImageUrl']}"
 		srcset="${images[target.dataset.id]['smallImageUrl']} 300w,
 			${images[target.dataset.id]['regularImageUrl']}"
-		sizes="50vw"
 		alt="${images[target.dataset.id]['description']}"
 		loading="lazy"
 	/>`
@@ -302,7 +305,6 @@ const openModal = (e) => {
 
 	//update the sizes attribute so that high quality image can be loaded in background
 	setTimeout(() => {
-		document.querySelector('.modal__image').setAttribute('sizes', '100vw')
 		document.querySelector('.modal__image').setAttribute(
 			'srcset',
 			`${images[target.dataset.id]['smallImageUrl']} 300w,
