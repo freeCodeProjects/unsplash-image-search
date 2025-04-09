@@ -108,18 +108,22 @@ const fetchImages = async () => {
 	const currImages = {}
 
 	result.forEach((img) => {
-		currImages[img.id] = {
-			id: img.id,
-			height: img.height,
-			width: img.width,
-			blurHash: blurhash.createPngDataUri(img.blur_hash),
-			smallImageUrl: img.urls.small,
-			regularImageUrl: img.urls.regular,
-			fullImageUrl: img.urls.full,
-			downloadLink: img.links.download,
-			user: img.user.name,
-			userProfileImage: img.user.profile_image.large,
-			description: img.alt_description
+		//if image is already in images object then skip it
+		//this is to avoid duplicate images send by Unsplash API
+		if (!(img.id in images)) {
+			currImages[img.id] = {
+				id: img.id,
+				height: img.height,
+				width: img.width,
+				blurHash: blurhash.createPngDataUri(img.blur_hash),
+				smallImageUrl: img.urls.small,
+				regularImageUrl: img.urls.regular,
+				fullImageUrl: img.urls.full,
+				downloadLink: img.links.download,
+				user: img.user.name,
+				userProfileImage: img.user.profile_image.large,
+				description: img.alt_description
+			}
 		}
 	})
 
