@@ -18,14 +18,14 @@ const initalizeGridColumns = () => {
 	const cols = new DocumentFragment()
 	if (viewportWidth > 960) {
 		document.documentElement.style.setProperty('--column', 3)
-		for(let i=1; i <= 3; i++){
+		for (let i = 1; i <= 3; i++) {
 			const div = document.createElement('div')
 			div.className = `column column-${i}`
 			cols.appendChild(div)
 		}
 	} else if (viewportWidth > 560) {
 		document.documentElement.style.setProperty('--column', 2)
-		for(let i=1; i <= 2; i++){
+		for (let i = 1; i <= 2; i++) {
 			const div = document.createElement('div')
 			div.className = `column column-${i}`
 			cols.appendChild(div)
@@ -87,7 +87,7 @@ const fetchImages = async () => {
 	try {
 		res = await response.json()
 	} catch (error) {
-		console.log('Error in fetchImages response.json')
+		console.error('Error in fetchImages response.json')
 		alert('Rate Limit Exceeded')
 		fetchMore = true
 		return null
